@@ -1,4 +1,8 @@
 # Sonarqube Typetalk Notifier Plugin
+![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=jp.co.atware%3Asonarqube-typetalk-plugin&metric=alert_status)
+![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jp.co.atware%3Asonarqube-typetalk-plugin&metric=coverage)
+![Bugs](https://sonarcloud.io/api/project_badges/measure?project=jp.co.atware%3Asonarqube-typetalk-plugin&metric=bugs)
+
 This plugin will notify [Typetalk](https://typetalk.com) chat application with measurement result in Quality gate when new analysis finished.
 
 ## Install plugin
