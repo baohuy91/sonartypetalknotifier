@@ -10,12 +10,14 @@ import org.sonar.api.config.Configuration;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.i18n.I18n;
 import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.measures.Metric;
+import org.sonar.api.measures.MetricFinder;
 
 import java.util.Date;
-import java.util.Locale;
 
 import static jp.co.atware.sonar.typetalknotifier.PluginProp.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.sonar.api.ce.posttask.PostProjectAnalysisTaskTester.*;
 
@@ -23,9 +25,12 @@ public class TypetalkPostProjectAnalysisTaskTest {
     @Test
     public void finished_WhenAnalyticsTaskFinished_ExpectSendTypetalkMessage() {
         final TypetalkClient typetalkClient = Mockito.mock(TypetalkClient.class);
-        final I18n i18n = Mockito.mock(I18n.class);
-        Mockito.when(i18n.message(any(Locale.class), anyString(), anyString()))
-                .thenAnswer((InvocationOnMock invocation) -> (String) invocation.getArguments()[2]);
+        final MetricFinder metricFinder = Mockito.mock(MetricFinder.class);
+        Mockito.when(metricFinder.findByKey(anyString()))
+                .thenAnswer((InvocationOnMock invocation) -> {
+                    final String key = (String) invocation.getArgument(0);
+                    return new Metric.Builder(key, key, Metric.ValueType.PERCENT).create();
+                });
         final Configuration configuration = new MapSettings()
                 .setProperty("sonar.core.serverBaseURL", "http://localhost:9000")
                 .setProperty(ENABLED.value(), true)
@@ -33,7 +38,7 @@ public class TypetalkPostProjectAnalysisTaskTest {
                 .setProperty(TYPETALK_TOKEN.value(), "abc")
                 .asConfig();
         final TypetalkPostProjectAnalysisTask task = new TypetalkPostProjectAnalysisTask(typetalkClient,
-                configuration, i18n);
+                configuration, metricFinder);
 
         simpleAnalysis(task);
 
@@ -46,13 +51,13 @@ public class TypetalkPostProjectAnalysisTaskTest {
 
     @Test
     public void finished_WhenPluginIsDisabled_ExpectNothingIsSent() {
-                final TypetalkClient typetalkClient = Mockito.mock(TypetalkClient.class);
+        final TypetalkClient typetalkClient = Mockito.mock(TypetalkClient.class);
         final I18n i18n = Mockito.mock(I18n.class);
         final Configuration configuration = new MapSettings()
                 .setProperty(ENABLED.value(), false)
                 .asConfig();
         final TypetalkPostProjectAnalysisTask task = new TypetalkPostProjectAnalysisTask(typetalkClient,
-                configuration, i18n);
+                configuration, Mockito.mock(MetricFinder.class));
 
         simpleAnalysis(task);
 

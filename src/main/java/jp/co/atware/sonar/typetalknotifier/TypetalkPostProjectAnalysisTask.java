@@ -4,12 +4,12 @@ import org.sonar.api.ce.posttask.PostProjectAnalysisTask;
 import org.sonar.api.ce.posttask.QualityGate;
 import org.sonar.api.ce.posttask.QualityGate.Condition;
 import org.sonar.api.config.Configuration;
-import org.sonar.api.i18n.I18n;
 import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.measures.Metric;
+import org.sonar.api.measures.MetricFinder;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import java.util.Locale;
 import java.util.Optional;
 
 import static jp.co.atware.sonar.typetalknotifier.PluginProp.*;
@@ -20,16 +20,18 @@ public class TypetalkPostProjectAnalysisTask implements PostProjectAnalysisTask 
 
     private final TypetalkClient typetalkClient;
     private final Configuration configuration;
-    private final I18n i18n;
+    // I18n can only get name of Core metrics. batch.MetricFinder is only inject in Scanner side.
+    private final MetricFinder metricFinder;
 
-    public TypetalkPostProjectAnalysisTask(Configuration configuration, I18n i18n) {
-        this(new TypetalkClient(TYPETALK_URL), configuration, i18n);
+    public TypetalkPostProjectAnalysisTask(Configuration configuration, MetricFinder metricFinder) {
+        this(new TypetalkClient(TYPETALK_URL), configuration, metricFinder);
     }
 
-    public TypetalkPostProjectAnalysisTask(TypetalkClient typetalkClient, Configuration configuration, I18n i18n) {
+    public TypetalkPostProjectAnalysisTask(TypetalkClient typetalkClient, Configuration configuration,
+                                           MetricFinder metricFinder) {
         this.typetalkClient = typetalkClient;
         this.configuration = configuration;
-        this.i18n = i18n;
+        this.metricFinder = metricFinder;
     }
 
     @Override
@@ -73,11 +75,16 @@ public class TypetalkPostProjectAnalysisTask implements PostProjectAnalysisTask 
     }
 
     private String makeConditionMessage(Condition condition) {
-        String i18nKey = "metric." + condition.getMetricKey() + ".name";
-        String conditionName = i18n.message(Locale.ENGLISH, i18nKey, condition.getMetricKey());
+        String conditionName = condition.getMetricKey();
+        final Metric metric = metricFinder.findByKey(condition.getMetricKey());
+        if (metric != null) {
+            conditionName = metric.getName();
+        }
 
-        return String.format("> %s %s → `%s`%s", emoji(condition), conditionName, getConditionValue(condition), getThresholdDesc(condition));
+        return String.format("> %s %s → `%s`%s", emoji(condition), conditionName, getConditionValue(condition),
+                getThresholdDesc(condition));
     }
+
     private String getThresholdDesc(Condition condition) {
         StringBuilder sb = new StringBuilder();
         if (condition.getWarningThreshold() != null) {
@@ -103,8 +110,8 @@ public class TypetalkPostProjectAnalysisTask implements PostProjectAnalysisTask 
     }
 
     private String getConditionValue(Condition condition) {
-        if (QualityGate.EvaluationStatus.NO_VALUE.equals(condition.getStatus())){
-           return condition.getStatus().name();
+        if (QualityGate.EvaluationStatus.NO_VALUE.equals(condition.getStatus())) {
+            return condition.getStatus().name();
         }
 
         if (isPercentageMetric(condition)) {
