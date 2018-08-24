@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'jp.co.atware'
-version '0.1'
+version '0.2.1'
 
 sourceCompatibility = 1.8
 

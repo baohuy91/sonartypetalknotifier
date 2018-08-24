@@ -8,30 +8,30 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 
 public class TypetalkClient {
-    private final String baseUrl;
+	private final String baseUrl;
 
-    public TypetalkClient(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
+	public TypetalkClient(String baseUrl) {
+		this.baseUrl = baseUrl;
+	}
 
-    void postMessage(String msg, String topicId, String typetalkToken) {
-        final OkHttpClient httpClient = new OkHttpClient();
-        final Gson gson = new Gson();
+	void postMessage(String msg, String topicId, String typetalkToken) {
+		final OkHttpClient httpClient = new OkHttpClient();
+		final Gson gson = new Gson();
 
-        final PostMessageRequest req = new PostMessageRequest();
-        req.message = msg;
-        final RequestBody body = RequestBody.create(MediaType.get("application/json"), gson.toJson(req));
+		final PostMessageRequest req = new PostMessageRequest();
+		req.message = msg;
+		final RequestBody body = RequestBody.create(MediaType.get("application/json"), gson.toJson(req));
 
-        final Request request = new Request.Builder()
-                .header("X-Typetalk-Token", typetalkToken)
-                .url(baseUrl + "/topics/" + topicId)
-                .post(body)
-                .build();
+		final Request request = new Request.Builder()
+				.header("X-Typetalk-Token", typetalkToken)
+				.url(baseUrl + "/topics/" + topicId)
+				.post(body)
+				.build();
 
-        try {
-            final Response response = httpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
+		try {
+			final Response response = httpClient.newCall(request).execute();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
 }
