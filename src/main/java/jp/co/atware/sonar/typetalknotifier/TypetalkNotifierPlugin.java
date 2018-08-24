@@ -35,9 +35,9 @@ public class TypetalkNotifierPlugin implements Plugin {
 				.subCategory(SUBCATEGORY)
 				.index(1)
 				.fields(
-						PropertyFieldDefinition.build(PluginProp.PROJECT_ID.value())
-								.name("Project id")
-								.description("The id of the project")
+						PropertyFieldDefinition.build(PluginProp.PROJECT_KEY.value())
+								.name("Project key")
+								.description("The key of the project")
 								.build(),
 						PropertyFieldDefinition.build(PluginProp.TYPETALK_TOPIC_ID.value())
 								.name("Typetalk topic Id")

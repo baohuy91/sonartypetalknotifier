@@ -8,7 +8,6 @@ import org.sonar.api.ce.posttask.PostProjectAnalysisTaskTester;
 import org.sonar.api.ce.posttask.QualityGate;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.config.internal.MapSettings;
-import org.sonar.api.i18n.I18n;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.measures.MetricFinder;
@@ -36,7 +35,7 @@ public class TypetalkPostProjectAnalysisTaskTest {
 				.setProperty("sonar.core.serverBaseURL", "http://localhost:9000")
 				.setProperty(ENABLED.value(), true)
 				.setProperty(PROJECT.value(), projIdx)
-				.setProperty(getFieldProperty(PROJECT.value(), projIdx, PROJECT_ID.value()), "key")
+				.setProperty(getFieldProperty(PROJECT.value(), projIdx, PROJECT_KEY.value()), "key")
 				.setProperty(getFieldProperty(PROJECT.value(), projIdx, TYPETALK_TOPIC_ID.value()), "123")
 				.setProperty(getFieldProperty(PROJECT.value(), projIdx, TYPETALK_TOKEN.value()), "abc")
 				.asConfig();
@@ -55,7 +54,6 @@ public class TypetalkPostProjectAnalysisTaskTest {
 	@Test
 	public void finished_WhenPluginIsDisabled_ExpectNothingIsSent() {
 		final TypetalkClient typetalkClient = Mockito.mock(TypetalkClient.class);
-		final I18n i18n = Mockito.mock(I18n.class);
 		final Configuration configuration = new MapSettings()
 				.setProperty(ENABLED.value(), false)
 				.asConfig();

@@ -3,7 +3,7 @@ package jp.co.atware.sonar.typetalknotifier;
 public enum PluginProp {
 	ENABLED("ttn.enabled"),
 	PROJECT("ttn.project"),
-	PROJECT_ID("projectId"),
+	PROJECT_KEY("projectKey"),
 	TYPETALK_TOKEN("typetalkToken"),
 	TYPETALK_TOPIC_ID("typetalkTopicId");
 

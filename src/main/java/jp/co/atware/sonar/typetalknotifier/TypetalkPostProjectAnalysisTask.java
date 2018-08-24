@@ -38,14 +38,12 @@ public class TypetalkPostProjectAnalysisTask implements PostProjectAnalysisTask 
 	@Override
 	public void finished(ProjectAnalysis analysis) {
 		final String projKey = analysis.getProject().getKey();
-		configuration.getBoolean(ENABLED.value() + "." + projKey)
-				.ifPresent(v -> LOG.info("Project enalbed: {}", v));
 		final Optional<Boolean> enabledOpt = configuration.getBoolean(ENABLED.value());
 		if (!enabledOpt.isPresent()) {
 			LOG.error("Plugin param {} missing", ENABLED.value());
 			return;
 		}
-		LOG.info("Typetalk plugin enable: {}", enabledOpt.get());
+		LOG.info("Typetalk plugin enabled: {}", enabledOpt.get());
 		if (!enabledOpt.get()) {
 			return;
 		}
@@ -53,7 +51,7 @@ public class TypetalkPostProjectAnalysisTask implements PostProjectAnalysisTask 
 		final String msg = createMessage(analysis);
 		final String[] projConfIdxes = configuration.getStringArray(PROJECT.value());
 		final Optional<String> projConfIdx = Arrays.stream(projConfIdxes).filter(idx ->
-				configuration.get(getFieldProperty(PROJECT.value(), idx, PROJECT_ID.value()))
+				configuration.get(getFieldProperty(PROJECT.value(), idx, PROJECT_KEY.value()))
 						.map(projKey::equals)
 						.orElse(false)
 		).findAny();
