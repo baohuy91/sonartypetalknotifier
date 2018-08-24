@@ -30,7 +30,7 @@ public class TypetalkNotifierPlugin implements Plugin {
 		// Can not get project's configuration with Qualifiers.PROJECT. Not sure why?
 		extensions.add(PropertyDefinition.builder(PluginProp.PROJECT.value())
 				.name("Per project configuration")
-				.description("Add each project for each typetalk topic. '*' could be used as the end")
+				.description("Add each project for each typetalk topic.")
 				.category(CATEGORY)
 				.subCategory(SUBCATEGORY)
 				.index(1)
@@ -44,6 +44,7 @@ public class TypetalkNotifierPlugin implements Plugin {
 								.description("The topic which result message will be sent to. e.g. 12345")
 								.build(),
 						PropertyFieldDefinition.build(PluginProp.TYPETALK_TOKEN.value())
+								.type(PropertyType.PASSWORD)
 								.name("Typetalk token")
 								.description("Authentication token of typetalk, could be bot's client token")
 								.build()
